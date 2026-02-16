@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 750e5d5cc294cef428785564641db101, type: 3}
   m_Name: newEffect
   m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.EffectSO
-  duration: 1
+  effectDuration: 5
   hasTick: 1
   tickInterval: 1
-  stackingPolicy: 0
+  stackingPolicy: 2

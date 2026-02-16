@@ -14,4 +14,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.AbilitySO
   effectList:
   - {fileID: 11400000, guid: 92591a1caa7e13e48a41e62ccabaaca9, type: 2}
-  - {fileID: 11400000, guid: c4045bba6923fe842a2efb71bf33bcaf, type: 2}
