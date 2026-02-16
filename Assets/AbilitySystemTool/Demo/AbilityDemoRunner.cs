@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace AbilitySystemTool
@@ -32,13 +31,41 @@ namespace AbilitySystemTool
 
                 if (effectSO == null) continue;
 
-                // Runtime instance
-                ActiveEffect activeEffect = new ActiveEffect(effectSO, effectSO.effectDuration);
-
-                _activeEffectList.Add(activeEffect);
-
-                Debug.Log($"[APPLY] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}, key={effectSO.StackKey})");
+                ApplyEffect(effectSO);
             }
+        }
+
+        private void ApplyEffect(EffectSO effectSO)
+        {
+            for (int i = 0; i < _activeEffectList.Count; i++)
+            {
+                ActiveEffect activeEffect = _activeEffectList[i];
+                if (activeEffect.effectSO == effectSO)
+                {
+                    switch (effectSO.stackingPolicy)
+                    {
+                        case StackingPolicy.Refresh:
+                            activeEffect.remainingDuration = effectSO.effectDuration;
+                            _activeEffectList[i] = activeEffect;
+                            Debug.Log($"[REFRESH] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}");
+                            break;
+                        case StackingPolicy.Replace:
+                            Debug.LogWarning($"Not implemented: {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}");
+                            break;
+                        case StackingPolicy.Stack:
+                            Debug.LogWarning($"Not implemented: {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}");
+                            break;
+                    }
+                    return;
+                }
+            }
+
+            // Runtime instance
+            ActiveEffect newActiveEffect = new ActiveEffect(effectSO, effectSO.effectDuration);
+
+            _activeEffectList.Add(newActiveEffect);
+
+            Debug.Log($"[APPLY] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}");
         }
 
         private void UpdateActiveEffects(float deltaTime)
@@ -57,14 +84,14 @@ namespace AbilitySystemTool
                     {
                         activeEffect.timeUntilNextTick += activeEffect.effectSO.tickInterval;
 
-                        Debug.Log($"[TICK] {activeEffect.effectSO.name} (key={activeEffect.effectSO.StackKey})");
+                        Debug.Log($"[TICK] {activeEffect.effectSO.name}");
                     }
                 }
 
                 // If the effect has expired, remove it
                 if (activeEffect.remainingDuration <= 0f)
                 {
-                    Debug.Log($"[EXPIRE] {activeEffect.effectSO.name} (key={activeEffect.effectSO.StackKey})");
+                    Debug.Log($"[EXPIRE] {activeEffect.effectSO.name}");
                     _activeEffectList.RemoveAt(i);
                     continue;
                 }

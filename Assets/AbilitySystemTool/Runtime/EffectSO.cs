@@ -20,7 +20,5 @@ namespace AbilitySystemTool
 
         [Header("Stacking")]
         public StackingPolicy stackingPolicy = StackingPolicy.Refresh; // to determine how to stack the effect
-
-        public int StackKey => GetInstanceID(); // to determine if the effect is the same
     }
 }
