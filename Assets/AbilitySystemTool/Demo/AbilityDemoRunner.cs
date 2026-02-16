@@ -47,13 +47,14 @@ namespace AbilitySystemTool
                         case StackingPolicy.Refresh:
                             activeEffect.remainingDuration = effectSO.effectDuration;
                             _activeEffectList[i] = activeEffect;
-                            Debug.Log($"[REFRESH] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}");
+                            Debug.Log($"[REFRESH] {effectSO.name} effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick})");
                             break;
                         case StackingPolicy.Replace:
-                            Debug.LogWarning($"Not implemented: {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}");
+                            _activeEffectList[i] = new ActiveEffect(effectSO, effectSO.effectDuration);
+                            Debug.Log($"[REPLACE] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick})");
                             break;
                         case StackingPolicy.Stack:
-                            Debug.LogWarning($"Not implemented: {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}");
+                            Debug.LogWarning($"Not implemented: {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick})");
                             break;
                     }
                     return;
@@ -65,7 +66,7 @@ namespace AbilitySystemTool
 
             _activeEffectList.Add(newActiveEffect);
 
-            Debug.Log($"[APPLY] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}");
+            Debug.Log($"[APPLY] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick})");
         }
 
         private void UpdateActiveEffects(float deltaTime)
