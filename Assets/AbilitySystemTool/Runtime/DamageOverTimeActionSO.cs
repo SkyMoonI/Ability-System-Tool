@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace AbilitySystemTool
 {
-    [CreateAssetMenu(menuName = "Ability System Tool/Damage Over Time Action", fileName = "newDamageOverTimeAction")]
-    public class DamageOverTimeActionSO : EffectActionSO
+    [CreateAssetMenu(menuName = "Ability System Tool/Effect Actions/Damage Over Time Action", fileName = "newDamageOverTimeAction")]
+    public sealed class DamageOverTimeActionSO : EffectActionSO
     {
         [SerializeField] private float _damagePerTick = 1f;
         public float DamagePerTick => _damagePerTick;
@@ -12,7 +12,10 @@ namespace AbilitySystemTool
 
         public override void OnTick(AbilityTarget target, int instanceId, EffectSO effectSO)
         {
-            target.HealthComponent.TakeDamage(DamagePerTick);
+            if (target == null) return;
+            if (!target.TryGetComponent(out HealthComponent healthComponent)) return;
+
+            healthComponent.TakeDamage(DamagePerTick);
         }
 
         public override void OnExpire(AbilityTarget target, int instanceId, EffectSO effectSO) { }
