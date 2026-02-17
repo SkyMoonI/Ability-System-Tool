@@ -8,6 +8,7 @@ namespace AbilitySystemTool
     [CreateAssetMenu(menuName = "Ability System Tool/Ability", fileName = "newAbility")]
     public class AbilitySO : ScriptableObject
     {
-        public List<EffectSO> effectList = new List<EffectSO>();
+        [SerializeField] private List<EffectSO> _effectList = new List<EffectSO>();
+        public List<EffectSO> EffectList => _effectList;
     }
 }

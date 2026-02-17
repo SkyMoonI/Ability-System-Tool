@@ -10,8 +10,8 @@
 
 - **EffectSO**
   - `duration` (0 = instant desteklenebilir)
-  - `hasTick`, `tickInterval`
-  - `stackingPolicy`: Refresh / Replace / Stack
+  - `HasTick`, `TickInterval`
+  - `StackingPolicy`: Refresh / Replace / Stack
   - (Stack için) `maxStacks` (opsiyonel: -1 = unlimited) _(istersen v1.1’e itebiliriz)_
 
 ### 2) Runtime Core
@@ -63,7 +63,7 @@ MVP’nin “işe yarar” olması için effect’in sadece log atması yetmez. 
 - Log formatı tutarlı:
   - `[CAST]`, `[APPLY]`, `[REFRESH]`, `[REPLACE]`, `[STACK]`, `[TICK]`, `[EXPIRE]` + `id=`
 
-- Null guard’lar, basic validation (tickInterval min vs)
+- Null guard’lar, basic validation (TickInterval min vs)
 
 ---
 
