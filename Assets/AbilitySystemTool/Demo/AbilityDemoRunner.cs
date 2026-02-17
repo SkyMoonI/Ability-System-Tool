@@ -9,6 +9,8 @@ namespace AbilitySystemTool
 
         private List<ActiveEffect> _activeEffectList;
         private Dictionary<EffectSO, int> _activeEffectCountDictionary;
+        private int _nextInstanceId = 1;
+
 
         private void Awake()
         {
@@ -54,14 +56,15 @@ namespace AbilitySystemTool
                         case StackingPolicy.Refresh:
                             activeEffect.remainingDuration = effectSO.effectDuration;
                             _activeEffectList[i] = activeEffect;
-                            Debug.Log($"[REFRESH] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick})");
+                            Debug.Log($"[REFRESH] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}, id={activeEffect.instanceId})");
                             break;
                         case StackingPolicy.Replace:
-                            _activeEffectList[i] = new ActiveEffect(effectSO, effectSO.effectDuration);
-                            Debug.Log($"[REPLACE] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick})");
+                            ActiveEffect replacedActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.effectDuration);
+                            _activeEffectList[i] = replacedActiveEffect;
+                            Debug.Log($"[REPLACE] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}, id={replacedActiveEffect.instanceId})");
                             break;
                         case StackingPolicy.Stack:
-                            ActiveEffect stackedActiveEffect = new ActiveEffect(effectSO, effectSO.effectDuration);
+                            ActiveEffect stackedActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.effectDuration);
                             _activeEffectList.Add(stackedActiveEffect);
 
 
@@ -76,7 +79,7 @@ namespace AbilitySystemTool
                                 _activeEffectCountDictionary.Add(effectSO, 1);
                             }
 
-                            Debug.Log($"[STACK] {effectSO.name} (count={stackCount}, effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick})");
+                            Debug.Log($"[STACK] {effectSO.name} (count={stackCount}, effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}, id={stackedActiveEffect.instanceId})");
                             break;
                     }
                     return;
@@ -84,11 +87,12 @@ namespace AbilitySystemTool
             }
 
             // Runtime instance
-            ActiveEffect newActiveEffect = new ActiveEffect(effectSO, effectSO.effectDuration);
+            ActiveEffect newActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.effectDuration);
 
             _activeEffectList.Add(newActiveEffect);
+            _activeEffectCountDictionary[effectSO] = 1;
 
-            Debug.Log($"[APPLY] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick})");
+            Debug.Log($"[APPLY] {effectSO.name} (effectDuration={effectSO.effectDuration}, tick={effectSO.hasTick}, id={newActiveEffect.instanceId})");
         }
 
         private void UpdateActiveEffects(float deltaTime)
@@ -107,14 +111,14 @@ namespace AbilitySystemTool
                     {
                         activeEffect.timeUntilNextTick += activeEffect.effectSO.tickInterval;
 
-                        Debug.Log($"[TICK] {activeEffect.effectSO.name}");
+                        Debug.Log($"[TICK] {activeEffect.effectSO.name}, id={activeEffect.instanceId}");
                     }
                 }
 
                 // If the effect has expired, remove it
                 if (activeEffect.remainingDuration <= 0f)
                 {
-                    Debug.Log($"[EXPIRE] {activeEffect.effectSO.name}");
+                    Debug.Log($"[EXPIRE] {activeEffect.effectSO.name}, id={activeEffect.instanceId}");
                     _activeEffectList.RemoveAt(i);
                     if (_activeEffectCountDictionary.TryGetValue(activeEffect.effectSO, out int count))
                     {
@@ -131,12 +135,14 @@ namespace AbilitySystemTool
 
         private struct ActiveEffect
         {
+            public int instanceId;
             public EffectSO effectSO;
             public float remainingDuration;
             public float timeUntilNextTick;
 
-            public ActiveEffect(EffectSO effectSO, float remainingDuration)
+            public ActiveEffect(int instanceId, EffectSO effectSO, float remainingDuration)
             {
+                this.instanceId = instanceId;
                 this.effectSO = effectSO;
                 this.remainingDuration = remainingDuration;
 
