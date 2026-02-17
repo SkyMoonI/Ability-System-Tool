@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 750e5d5cc294cef428785564641db101, type: 3}
   m_Name: newEffect
   m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.EffectSO
-  effectDuration: 1
-  hasTick: 1
-  tickInterval: 1
-  stackingPolicy: 2
-  effectActionSO: {fileID: 11400000, guid: a261155bd8f0966479977eb0b4125f6e, type: 2}
+  _effectDuration: 1
+  _hasTick: 1
+  _tickInterval: 1
+  _effectActionSO: {fileID: 11400000, guid: a261155bd8f0966479977eb0b4125f6e, type: 2}
+  _stackingPolicy: 0

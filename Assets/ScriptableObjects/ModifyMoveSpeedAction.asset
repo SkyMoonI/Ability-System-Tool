@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 620a207e36f3fb54dade6346ea4c83f5, type: 3}
-  m_Name: newAbility
-  m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.AbilitySO
-  _effectList:
-  - {fileID: 11400000, guid: 92591a1caa7e13e48a41e62ccabaaca9, type: 2}
+  m_Script: {fileID: 11500000, guid: dcafe500a285c7c40b7a63e30323773c, type: 3}
+  m_Name: ModifyMoveSpeedAction
+  m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.ModifyMoveSpeedActionSO
+  _multiplier: 0.7
