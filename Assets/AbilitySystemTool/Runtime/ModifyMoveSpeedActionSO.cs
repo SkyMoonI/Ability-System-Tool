@@ -16,7 +16,8 @@ namespace AbilitySystemTool
         public override void OnApply(AbilityTarget target, int instanceId, EffectSO effectSO)
         {
             if (target == null) return;
-            if (!target.TryGetComponent(out StatsComponent statsComponent)) return;
+            StatsComponent statsComponent = target.StatsComponent;
+            if (statsComponent == null) return;
 
             statsComponent.MultiplyMoveSpeed(_multiplier);
             Debug.Log($"[SLOW APPLY] {effectSO.name} (id={instanceId}, mult={_multiplier}, speed={statsComponent.CurrentMoveSpeed})");
@@ -27,7 +28,8 @@ namespace AbilitySystemTool
         public override void OnExpire(AbilityTarget target, int instanceId, EffectSO effectSO)
         {
             if (target == null) return;
-            if (!target.TryGetComponent(out StatsComponent statsComponent)) return;
+            StatsComponent statsComponent = target.StatsComponent;
+            if (statsComponent == null) return;
 
             statsComponent.DivideMoveSpeed(_multiplier);
             Debug.Log($"[SLOW EXPIRE] {effectSO.name} (id={instanceId}, mult={_multiplier}, speed={statsComponent.CurrentMoveSpeed})");
