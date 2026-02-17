@@ -13,7 +13,9 @@ namespace AbilitySystemTool
         public override void OnTick(AbilityTarget target, int instanceId, EffectSO effectSO)
         {
             if (target == null) return;
-            if (!target.TryGetComponent(out HealthComponent healthComponent)) return;
+            HealthComponent healthComponent = target.HealthComponent;
+            if (healthComponent == null) return;
+
 
             healthComponent.TakeDamage(DamagePerTick);
         }
