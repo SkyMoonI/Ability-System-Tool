@@ -12,13 +12,21 @@ namespace AbilitySystemTool
     [CreateAssetMenu(menuName = "Ability System Tool/Effect", fileName = "newEffect")]
     public class EffectSO : ScriptableObject
     {
-        [Min(0f)] public float effectDuration = 1f;
+        [SerializeField, Min(0f)] private float _effectDuration = 1f;
+        public float EffectDuration => _effectDuration;
 
-        [Header("Tick (optional)")]
-        public bool hasTick = false;
-        [Min(0.01f)] public float tickInterval = 1f; // apply the effect every x seconds
+        [Header("Tick")]
+        [SerializeField] private bool _hasTick = false;
+        public bool HasTick => _hasTick;
+        [SerializeField, Min(0.01f)] private float _tickInterval = 1f; // apply the effect every x seconds
+        public float TickInterval => _tickInterval;
+
+        [Header("Action")]
+        [SerializeField] private EffectActionSO _effectActionSO;
+        public EffectActionSO EffectActionSO => _effectActionSO;
 
         [Header("Stacking")]
-        public StackingPolicy stackingPolicy = StackingPolicy.Refresh; // to determine how to stack the effect
+        [SerializeField] private StackingPolicy _stackingPolicy = StackingPolicy.Refresh; // to determine how to stack the effect
+        public StackingPolicy StackingPolicy => _stackingPolicy;
     }
 }
