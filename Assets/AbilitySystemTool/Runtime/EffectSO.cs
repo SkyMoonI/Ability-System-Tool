@@ -1,3 +1,6 @@
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace AbilitySystemTool
@@ -28,5 +31,44 @@ namespace AbilitySystemTool
         [Header("Stacking")]
         [SerializeField] private StackingPolicy _stackingPolicy = StackingPolicy.Refresh; // to determine how to stack the effect
         public StackingPolicy StackingPolicy => _stackingPolicy;
+
+        private const float MinTickInterval = 0.01f;
+
+        private void OnValidate()
+        {
+            bool changed = false;
+
+            if (_effectDuration < 0f)
+            {
+                _effectDuration = 0f;
+                changed = true;
+                Debug.LogWarning($"[EffectSO] Duration was < 0. Clamped to 0 on '{name}'.", this);
+            }
+
+            if (_hasTick)
+            {
+                if (_tickInterval < MinTickInterval)
+                {
+                    _tickInterval = MinTickInterval;
+                    changed = true;
+                    Debug.LogWarning($"[EffectSO] TickInterval was < {MinTickInterval}. Clamped to {MinTickInterval} on '{name}'.", this);
+                }
+            }
+            else
+            {
+                if (_tickInterval != 0f)
+                {
+                    _tickInterval = 0f;
+                    changed = true;
+                }
+            }
+
+#if UNITY_EDITOR
+            if (changed)
+            {
+                EditorUtility.SetDirty(this);
+            }
+#endif
+        }
     }
 }
