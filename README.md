@@ -86,3 +86,54 @@ Bunlar “hemen gerekli değil”, v1’i geciktirir:
 - Save/Load, serialization runtime state
 - Resistance/Immunity system
 - Event bus / gameplay tags gibi kompleks sistemler
+
+## Demo: Poison Bolt (DoT + Slow)
+
+A minimal playable demo scene is included to showcase the MVP runtime loop (Cast → Apply → Tick → Expire) with real effect logic.
+
+### Open the demo scene
+
+- Scene: `Assets/AbilitySystemTool/Demo/Scenes/Demo_PoisonBolt.unity`
+
+### How to run
+
+1. Open the scene above.
+2. Press **Play**.
+3. Press **Space** to cast **Poison Bolt** on the dummy target.
+
+### What happens
+
+- **Poison DoT** ticks every `1s` for `5s` (damage per tick: `10`)
+- **Slow** applies for `3s` (move speed multiplier: `0.7`)
+- Logs show the full lifecycle: `[CAST]`, `[APPLY]`, `[TICK]`, `[EXPIRE]` (+ effect action logs like `[SLOW APPLY]` / `[SLOW EXPIRE]`)
+
+### Sample assets included
+
+**Ability**
+
+- `Assets/AbilitySystemTool/Demo/SampleAssets/AbilityAssets/Ability_PoisonBolt.asset`
+
+**Effects**
+
+- `Assets/AbilitySystemTool/Demo/SampleAssets/EffectAssets/Effect_Poison_DoT.asset`
+- `Assets/AbilitySystemTool/Demo/SampleAssets/EffectAssets/Effect_Slow.asset`
+
+**Effect Actions**
+
+- `Assets/AbilitySystemTool/Demo/SampleAssets/EffectActionAssets/Action_DamageOverTime_10.asset`
+- `Assets/AbilitySystemTool/Demo/SampleAssets/EffectActionAssets/Action_ModifyMoveSpeed_0p7.asset`
+
+### Scene setup (for reference)
+
+**Player**
+
+- `AbilityRunner` (casts on Space)
+
+**DummyTarget**
+
+- `AbilityTarget`
+- `AbilitySystemComponent`
+- `HealthComponent`
+- `StatsComponent`
+
+> Tip: To quickly list asset paths in the project, use `Tools/Export/Copy Asset Paths (Selection or Assets)`.

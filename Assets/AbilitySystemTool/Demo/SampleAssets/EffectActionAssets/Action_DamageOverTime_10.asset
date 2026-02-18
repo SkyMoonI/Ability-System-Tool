@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcafe500a285c7c40b7a63e30323773c, type: 3}
-  m_Name: ModifyMoveSpeedAction
-  m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.ModifyMoveSpeedActionSO
-  _multiplier: 0.7
+  m_Script: {fileID: 11500000, guid: 87730cc8c9a161d4cb3ec713ed63bd21, type: 3}
+  m_Name: Action_DamageOverTime_10
+  m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.DamageOverTimeActionSO
+  _damagePerTick: 10
