@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 620a207e36f3fb54dade6346ea4c83f5, type: 3}
-  m_Name: newAbility
+  m_Name: Ability_PoisonBolt
   m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.AbilitySO
   _effectList:
   - {fileID: 11400000, guid: 92591a1caa7e13e48a41e62ccabaaca9, type: 2}
+  - {fileID: 11400000, guid: c59811fbbb8382e44a4101a77de2ec07, type: 2}
