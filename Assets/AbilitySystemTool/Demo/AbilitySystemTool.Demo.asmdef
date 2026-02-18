@@ -1,0 +1,16 @@
+{
+    "name": "AbilitySystemTool.Demo",
+    "rootNamespace": "",
+    "references": [
+        "GUID:7549b8b48ec3aa4439e18aa06d1ec4e0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
