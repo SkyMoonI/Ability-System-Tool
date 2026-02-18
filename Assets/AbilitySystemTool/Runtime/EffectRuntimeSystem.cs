@@ -3,50 +3,32 @@ using UnityEngine;
 
 namespace AbilitySystemTool
 {
-    public class AbilityDemoRunner : MonoBehaviour
+    public sealed class EffectRuntimeSystem
     {
-        [SerializeField] private AbilitySO abilitySO;
-        [SerializeField] private AbilityTarget currentAbilityTarget;
-
+        private AbilityTarget _ownerTarget;
         private List<ActiveEffect> _activeEffectList;
         private Dictionary<EffectSO, int> _activeEffectCountDictionary;
         private int _nextInstanceId = 1;
 
-
-        private void Awake()
+        public EffectRuntimeSystem(AbilityTarget ownerTarget, int initialCapacity = 32)
         {
-            _activeEffectList = new List<ActiveEffect>(32);
-            _activeEffectCountDictionary = new Dictionary<EffectSO, int>(16);
+            _ownerTarget = ownerTarget;
+            _activeEffectList = new List<ActiveEffect>(initialCapacity);
+            _activeEffectCountDictionary = new Dictionary<EffectSO, int>(Mathf.Max(8, initialCapacity / 2));
         }
 
-        private void Update()
+        public void Update(float deltaTime)
         {
-            // 1) Input: ability cast
-            if (abilitySO != null && Input.GetKeyDown(KeyCode.Space))
-            {
-                CastAbility(abilitySO);
-            }
-
-            UpdateActiveEffects(Time.deltaTime);
+            if (deltaTime <= 0f) return;
+            if (_activeEffectList.Count == 0) return;
+            UpdateActiveEffects(deltaTime);
         }
 
-        private void CastAbility(AbilitySO abilitySO)
+        public void ApplyEffect(EffectSO effectSO)
         {
-            Debug.Log($"[CAST] {abilitySO.name}");
+            if (effectSO == null) return;
+            if (_ownerTarget == null) return;
 
-            // Start every effect in the ability
-            for (int i = 0; i < abilitySO.EffectList.Count; i++)
-            {
-                EffectSO effectSO = abilitySO.EffectList[i];
-
-                if (effectSO == null) continue;
-
-                ApplyEffect(effectSO);
-            }
-        }
-
-        private void ApplyEffect(EffectSO effectSO)
-        {
             for (int i = 0; i < _activeEffectList.Count; i++)
             {
                 ActiveEffect activeEffect = _activeEffectList[i];
@@ -60,20 +42,18 @@ namespace AbilitySystemTool
                             Debug.Log($"[REFRESH] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={activeEffect.instanceId})");
                             break;
                         case StackingPolicy.Replace:
-                            activeEffect.effectSO.EffectActionSO?.OnExpire(activeEffect.abilityTarget, activeEffect.instanceId, activeEffect.effectSO);
+                            activeEffect.effectSO.EffectActionSO?.OnExpire(_ownerTarget, activeEffect.instanceId, activeEffect.effectSO);
 
-                            ActiveEffect replacedActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.EffectDuration, activeEffect.abilityTarget);
+                            ActiveEffect replacedActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.EffectDuration);
                             _activeEffectList[i] = replacedActiveEffect;
 
-                            effectSO.EffectActionSO?.OnApply(activeEffect.abilityTarget, replacedActiveEffect.instanceId, effectSO);
+                            effectSO.EffectActionSO?.OnApply(_ownerTarget, replacedActiveEffect.instanceId, effectSO);
 
                             Debug.Log($"[REPLACE] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={replacedActiveEffect.instanceId})");
                             break;
                         case StackingPolicy.Stack:
-                            ActiveEffect stackedActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.EffectDuration, activeEffect.abilityTarget);
+                            ActiveEffect stackedActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.EffectDuration);
                             _activeEffectList.Add(stackedActiveEffect);
-
-                            effectSO.EffectActionSO?.OnApply(activeEffect.abilityTarget, stackedActiveEffect.instanceId, effectSO);
 
                             if (_activeEffectCountDictionary.TryGetValue(effectSO, out int stackCount))
                             {
@@ -86,6 +66,8 @@ namespace AbilitySystemTool
                                 _activeEffectCountDictionary.Add(effectSO, 1);
                             }
 
+                            effectSO.EffectActionSO?.OnApply(_ownerTarget, stackedActiveEffect.instanceId, effectSO);
+
                             Debug.Log($"[STACK] {effectSO.name} (count={stackCount}, EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={stackedActiveEffect.instanceId})");
                             break;
                     }
@@ -94,12 +76,21 @@ namespace AbilitySystemTool
             }
 
             // Runtime instance
-            ActiveEffect newActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.EffectDuration, currentAbilityTarget);
+            ActiveEffect newActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.EffectDuration);
 
             _activeEffectList.Add(newActiveEffect);
-            _activeEffectCountDictionary[effectSO] = 1;
+            if (_activeEffectCountDictionary.TryGetValue(effectSO, out int newStackCount))
+            {
+                newStackCount++;
+                _activeEffectCountDictionary[effectSO] = newStackCount;
+            }
+            else
+            {
+                newStackCount = 1;
+                _activeEffectCountDictionary.Add(effectSO, newStackCount);
+            }
 
-            effectSO.EffectActionSO?.OnApply(newActiveEffect.abilityTarget, newActiveEffect.instanceId, newActiveEffect.effectSO);
+            effectSO.EffectActionSO?.OnApply(_ownerTarget, newActiveEffect.instanceId, newActiveEffect.effectSO);
 
             Debug.Log($"[APPLY] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={newActiveEffect.instanceId})");
         }
@@ -121,16 +112,16 @@ namespace AbilitySystemTool
                         activeEffect.timeUntilNextTick += activeEffect.effectSO.TickInterval;
 
                         Debug.Log($"[TICK] {activeEffect.effectSO.name} (id={activeEffect.instanceId})");
-                        activeEffect.effectSO.EffectActionSO?.OnTick(activeEffect.abilityTarget, activeEffect.instanceId, activeEffect.effectSO);
+                        activeEffect.effectSO.EffectActionSO?.OnTick(_ownerTarget, activeEffect.instanceId, activeEffect.effectSO);
                     }
                 }
 
                 // If the effect has expired, remove it
                 if (activeEffect.remainingDuration <= 0f)
                 {
-                    Debug.Log($"[EXPIRE] {activeEffect.effectSO.name}, id={activeEffect.instanceId}");
+                    Debug.Log($"[EXPIRE] {activeEffect.effectSO.name} (id={activeEffect.instanceId})");
 
-                    activeEffect.effectSO.EffectActionSO?.OnExpire(activeEffect.abilityTarget, activeEffect.instanceId, activeEffect.effectSO);
+                    activeEffect.effectSO.EffectActionSO?.OnExpire(_ownerTarget, activeEffect.instanceId, activeEffect.effectSO);
 
                     _activeEffectList.RemoveAt(i);
 
@@ -153,14 +144,12 @@ namespace AbilitySystemTool
             public EffectSO effectSO;
             public float remainingDuration;
             public float timeUntilNextTick;
-            public AbilityTarget abilityTarget;
 
-            public ActiveEffect(int instanceId, EffectSO effectSO, float remainingDuration, AbilityTarget abilityTarget)
+            public ActiveEffect(int instanceId, EffectSO effectSO, float remainingDuration)
             {
                 this.instanceId = instanceId;
                 this.effectSO = effectSO;
                 this.remainingDuration = remainingDuration;
-                this.abilityTarget = abilityTarget;
 
                 if (effectSO.HasTick)
                     timeUntilNextTick = Mathf.Max(0.01f, effectSO.TickInterval);
