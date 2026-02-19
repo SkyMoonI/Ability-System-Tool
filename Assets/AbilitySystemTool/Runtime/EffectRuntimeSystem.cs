@@ -169,6 +169,97 @@ namespace AbilitySystemTool
                 stackCount);
         }
 
+        internal bool HasEffect(EffectSO effect)
+        {
+            return _activeEffectCountDictionary.ContainsKey(effect);
+        }
+
+        internal int GetStackCount(EffectSO effect)
+        {
+            return _activeEffectCountDictionary.TryGetValue(effect, out int count) ? count : 0;
+        }
+
+        internal bool TryGetEffect(EffectSO effect, out ActiveEffectHandle handle)
+        {
+            for (int i = 0; i < _activeEffectList.Count; i++)
+            {
+                if (_activeEffectList[i].effectSO == effect)
+                {
+                    handle = new ActiveEffectHandle(_activeEffectList[i].instanceId, effect);
+                    return true;
+                }
+            }
+
+            handle = default;
+            return false;
+        }
+
+        internal int RemoveEffect(EffectSO effect, RemoveReason reason, bool removeAllStacks = true)
+        {
+            if (effect == null) return 0;
+
+            int removedCount = 0;
+            int currentCount = GetStackCount(effect);
+            if (currentCount <= 0) return removedCount;
+
+            for (int i = _activeEffectList.Count - 1; i >= 0; i--)
+            {
+                if (_activeEffectList[i].effectSO != effect) continue;
+
+                ActiveEffect activeEffect = _activeEffectList[i];
+
+                int countBefore = currentCount;
+                EffectContext effectContext = BuildContext(in activeEffect, countBefore);
+                activeEffect.effectSO.EffectActionSO?.OnExpire(in effectContext);
+
+                Debug.Log($"[REMOVE] {activeEffect.effectSO.name} (id={activeEffect.instanceId}, reason={reason})");
+
+                _activeEffectList.RemoveAt(i);
+
+                currentCount--;
+                if (currentCount <= 0) _activeEffectCountDictionary.Remove(effect);
+                else _activeEffectCountDictionary[effect] = currentCount;
+
+                removedCount++;
+
+                if (!removeAllStacks) break;
+
+            }
+
+            return removedCount;
+        }
+
+        internal int RemoveEffectsBySource(AbilityTarget source, RemoveReason reason)
+        {
+            if (source == null) return 0;
+
+            int removedCount = 0;
+
+            for (int i = _activeEffectList.Count - 1; i >= 0; i--)
+            {
+                if (_activeEffectList[i].abilitySource == source)
+                {
+                    ActiveEffect activeEffect = _activeEffectList[i];
+                    int countBefore = GetStackCount(activeEffect.effectSO);
+
+                    EffectContext effectContext = BuildContext(in activeEffect, countBefore);
+                    activeEffect.effectSO.EffectActionSO?.OnExpire(in effectContext);
+
+                    Debug.Log($"[REMOVE] {activeEffect.effectSO.name} (id={activeEffect.instanceId}, reason={reason})");
+
+                    _activeEffectList.RemoveAt(i);
+
+                    int countAfter = countBefore - 1;
+                    if (countAfter <= 0) _activeEffectCountDictionary.Remove(activeEffect.effectSO);
+                    else _activeEffectCountDictionary[activeEffect.effectSO] = countAfter;
+
+                    removedCount += 1;
+                }
+            }
+
+            return removedCount;
+        }
+
         private struct ActiveEffect
         {
             public int instanceId;
