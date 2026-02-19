@@ -16,4 +16,4 @@ MonoBehaviour:
   _hasTick: 0
   _tickInterval: 0
   _effectActionSO: {fileID: 11400000, guid: 4bdbf6a32cbae7943ab8e927872ccf1e, type: 2}
-  _stackingPolicy: 1
+  _stackingPolicy: 2
