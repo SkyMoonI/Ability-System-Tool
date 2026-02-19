@@ -6,17 +6,18 @@ namespace AbilitySystemTool
     public sealed class AbilitySystemComponent : MonoBehaviour
     {
         private AbilityTarget _ownerTarget;
-        private EffectRuntimeSystem _effects;
+        private EffectRuntimeSystem _effectSystem;
 
         private void Awake()
         {
             _ownerTarget = GetComponent<AbilityTarget>();
-            _effects = new EffectRuntimeSystem(_ownerTarget);
+            _effectSystem = new EffectRuntimeSystem(_ownerTarget);
         }
 
         private void Update()
         {
-            _effects.Update(Time.deltaTime);
+            _effectSystem.Update(Time.deltaTime);
+
         }
 
         public void ApplyAbility(AbilityTarget abilitySource, AbilitySO abilitySO)
@@ -28,8 +29,33 @@ namespace AbilitySystemTool
                 EffectSO effectSO = abilitySO.EffectList[i];
                 if (effectSO == null) continue;
 
-                _effects.ApplyEffect(abilitySource, abilitySO, effectSO);
+                _effectSystem.ApplyEffect(abilitySource, abilitySO, effectSO);
             }
+        }
+
+        public bool HasEffect(EffectSO effect)
+        {
+            return _effectSystem.HasEffect(effect);
+        }
+
+        public int GetStackCount(EffectSO effect)
+        {
+            return _effectSystem.GetStackCount(effect);
+        }
+
+        public bool TryGetEffect(EffectSO effect, out ActiveEffectHandle handle)
+        {
+            return _effectSystem.TryGetEffect(effect, out handle);
+        }
+
+        public int RemoveEffect(EffectSO effect, RemoveReason reason, bool removeAllStacks = true)
+        {
+            return _effectSystem.RemoveEffect(effect, reason, removeAllStacks);
+        }
+
+        public int RemoveEffectsBySource(AbilityTarget source, RemoveReason reason)
+        {
+            return _effectSystem.RemoveEffectsBySource(source, reason);
         }
     }
 }
