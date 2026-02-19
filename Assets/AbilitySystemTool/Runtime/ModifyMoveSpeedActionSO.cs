@@ -13,26 +13,26 @@ namespace AbilitySystemTool
             _multiplier = Mathf.Clamp(_multiplier, 0.01f, 10f);
         }
 
-        public override void OnApply(AbilityTarget target, int instanceId, EffectSO effectSO)
+        public override void OnApply(in EffectContext context)
         {
-            if (target == null) return;
-            StatsComponent statsComponent = target.StatsComponent;
+            if (context.Target == null) return;
+            StatsComponent statsComponent = context.Target.StatsComponent;
             if (statsComponent == null) return;
 
             statsComponent.MultiplyMoveSpeed(_multiplier);
-            Debug.Log($"[SLOW APPLY] {effectSO.name} (id={instanceId}, mult={_multiplier}, speed={statsComponent.CurrentMoveSpeed})");
+            Debug.Log($"[SLOW APPLY] {context.Effect.name} (id={context.InstanceId}, mult={_multiplier}, speed={statsComponent.CurrentMoveSpeed})");
         }
 
-        public override void OnTick(AbilityTarget target, int instanceId, EffectSO effectSO) { }
+        public override void OnTick(in EffectContext context) { }
 
-        public override void OnExpire(AbilityTarget target, int instanceId, EffectSO effectSO)
+        public override void OnExpire(in EffectContext context)
         {
-            if (target == null) return;
-            StatsComponent statsComponent = target.StatsComponent;
+            if (context.Target == null) return;
+            StatsComponent statsComponent = context.Target.StatsComponent;
             if (statsComponent == null) return;
 
             statsComponent.DivideMoveSpeed(_multiplier);
-            Debug.Log($"[SLOW EXPIRE] {effectSO.name} (id={instanceId}, mult={_multiplier}, speed={statsComponent.CurrentMoveSpeed})");
+            Debug.Log($"[SLOW EXPIRE] {context.Effect.name} (id={context.InstanceId}, mult={_multiplier}, speed={statsComponent.CurrentMoveSpeed})");
         }
     }
 }

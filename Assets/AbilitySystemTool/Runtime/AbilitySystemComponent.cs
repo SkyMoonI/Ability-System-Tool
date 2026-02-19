@@ -19,7 +19,7 @@ namespace AbilitySystemTool
             _effects.Update(Time.deltaTime);
         }
 
-        public void ApplyAbility(AbilitySO abilitySO)
+        public void ApplyAbility(AbilityTarget abilitySource, AbilitySO abilitySO)
         {
             if (abilitySO == null) return;
 
@@ -28,7 +28,7 @@ namespace AbilitySystemTool
                 EffectSO effectSO = abilitySO.EffectList[i];
                 if (effectSO == null) continue;
 
-                _effects.ApplyEffect(effectSO);
+                _effects.ApplyEffect(abilitySource, abilitySO, effectSO);
             }
         }
     }

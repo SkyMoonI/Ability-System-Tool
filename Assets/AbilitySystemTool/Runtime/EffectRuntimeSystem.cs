@@ -24,7 +24,7 @@ namespace AbilitySystemTool
             UpdateActiveEffects(deltaTime);
         }
 
-        public void ApplyEffect(EffectSO effectSO)
+        public void ApplyEffect(AbilityTarget abilitySource, AbilitySO abilitySO, EffectSO effectSO)
         {
             if (effectSO == null) return;
             if (_ownerTarget == null) return;
@@ -38,21 +38,30 @@ namespace AbilitySystemTool
                     {
                         case StackingPolicy.Refresh:
                             activeEffect.remainingDuration = effectSO.EffectDuration;
+
+                            // keep latest applier
+                            activeEffect.abilitySource = abilitySource;
+                            activeEffect.abilitySO = abilitySO;
+
                             _activeEffectList[i] = activeEffect;
                             Debug.Log($"[REFRESH] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={activeEffect.instanceId})");
                             break;
                         case StackingPolicy.Replace:
-                            activeEffect.effectSO.EffectActionSO?.OnExpire(_ownerTarget, activeEffect.instanceId, activeEffect.effectSO);
+                            Debug.Log($"[REPLACE] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={activeEffect.instanceId})");
 
-                            ActiveEffect replacedActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.EffectDuration);
+                            int count = _activeEffectCountDictionary.TryGetValue(effectSO, out int c) ? c : 1;
+
+                            EffectContext expiredEffectContext = BuildContext(in activeEffect, count);
+                            activeEffect.effectSO.EffectActionSO?.OnExpire(in expiredEffectContext);
+
+                            ActiveEffect replacedActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, abilitySource, abilitySO, effectSO.EffectDuration);
                             _activeEffectList[i] = replacedActiveEffect;
 
-                            effectSO.EffectActionSO?.OnApply(_ownerTarget, replacedActiveEffect.instanceId, effectSO);
-
-                            Debug.Log($"[REPLACE] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={replacedActiveEffect.instanceId})");
+                            EffectContext replacedEffectContext = BuildContext(in replacedActiveEffect, count);
+                            effectSO.EffectActionSO?.OnApply(in replacedEffectContext);
                             break;
                         case StackingPolicy.Stack:
-                            ActiveEffect stackedActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.EffectDuration);
+                            ActiveEffect stackedActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, abilitySource, abilitySO, effectSO.EffectDuration);
                             _activeEffectList.Add(stackedActiveEffect);
 
                             if (_activeEffectCountDictionary.TryGetValue(effectSO, out int stackCount))
@@ -66,7 +75,9 @@ namespace AbilitySystemTool
                                 _activeEffectCountDictionary.Add(effectSO, 1);
                             }
 
-                            effectSO.EffectActionSO?.OnApply(_ownerTarget, stackedActiveEffect.instanceId, effectSO);
+                            EffectContext newEffectContext = BuildContext(in stackedActiveEffect, stackCount);
+
+                            effectSO.EffectActionSO?.OnApply(in newEffectContext);
 
                             Debug.Log($"[STACK] {effectSO.name} (count={stackCount}, EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={stackedActiveEffect.instanceId})");
                             break;
@@ -76,9 +87,10 @@ namespace AbilitySystemTool
             }
 
             // Runtime instance
-            ActiveEffect newActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, effectSO.EffectDuration);
+            ActiveEffect newActiveEffect = new ActiveEffect(_nextInstanceId++, effectSO, abilitySource, abilitySO, effectSO.EffectDuration);
 
             _activeEffectList.Add(newActiveEffect);
+
             if (_activeEffectCountDictionary.TryGetValue(effectSO, out int newStackCount))
             {
                 newStackCount++;
@@ -90,7 +102,9 @@ namespace AbilitySystemTool
                 _activeEffectCountDictionary.Add(effectSO, newStackCount);
             }
 
-            effectSO.EffectActionSO?.OnApply(_ownerTarget, newActiveEffect.instanceId, newActiveEffect.effectSO);
+            EffectContext effectContext = BuildContext(in newActiveEffect, newStackCount);
+
+            effectSO.EffectActionSO?.OnApply(in effectContext);
 
             Debug.Log($"[APPLY] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={newActiveEffect.instanceId})");
         }
@@ -111,26 +125,32 @@ namespace AbilitySystemTool
                     {
                         activeEffect.timeUntilNextTick += activeEffect.effectSO.TickInterval;
 
+                        int stackCount = _activeEffectCountDictionary.TryGetValue(activeEffect.effectSO, out int count) ? count : 1;
+                        EffectContext effectContext = BuildContext(in activeEffect, stackCount);
+
+
                         Debug.Log($"[TICK] {activeEffect.effectSO.name} (id={activeEffect.instanceId})");
-                        activeEffect.effectSO.EffectActionSO?.OnTick(_ownerTarget, activeEffect.instanceId, activeEffect.effectSO);
+                        activeEffect.effectSO.EffectActionSO?.OnTick(in effectContext);
                     }
                 }
 
                 // If the effect has expired, remove it
                 if (activeEffect.remainingDuration <= 0f)
                 {
-                    Debug.Log($"[EXPIRE] {activeEffect.effectSO.name} (id={activeEffect.instanceId})");
+                    int stackCountBefore = _activeEffectCountDictionary.TryGetValue(activeEffect.effectSO, out int count) ? count : 1;
 
-                    activeEffect.effectSO.EffectActionSO?.OnExpire(_ownerTarget, activeEffect.instanceId, activeEffect.effectSO);
+                    EffectContext effectContext = BuildContext(in activeEffect, stackCountBefore);
+
+                    activeEffect.effectSO.EffectActionSO?.OnExpire(in effectContext);
+
+                    Debug.Log($"[EXPIRE] {activeEffect.effectSO.name} (id={activeEffect.instanceId})");
 
                     _activeEffectList.RemoveAt(i);
 
-                    if (_activeEffectCountDictionary.TryGetValue(activeEffect.effectSO, out int count))
-                    {
-                        count--;
-                        if (count <= 0) _activeEffectCountDictionary.Remove(activeEffect.effectSO);
-                        else _activeEffectCountDictionary[activeEffect.effectSO] = count;
-                    }
+                    int stackCountAfter = stackCountBefore - 1;
+                    if (stackCountAfter <= 0) _activeEffectCountDictionary.Remove(activeEffect.effectSO);
+                    else _activeEffectCountDictionary[activeEffect.effectSO] = stackCountAfter;
+
                     continue;
                 }
 
@@ -138,17 +158,34 @@ namespace AbilitySystemTool
             }
         }
 
+        private EffectContext BuildContext(in ActiveEffect activeEffect, int stackCount)
+        {
+            return new EffectContext(
+                activeEffect.abilitySource,
+                _ownerTarget,
+                activeEffect.abilitySO,
+                activeEffect.effectSO,
+                activeEffect.instanceId,
+                stackCount);
+        }
+
         private struct ActiveEffect
         {
             public int instanceId;
             public EffectSO effectSO;
+
+            public AbilityTarget abilitySource;
+            public AbilitySO abilitySO;
+
             public float remainingDuration;
             public float timeUntilNextTick;
 
-            public ActiveEffect(int instanceId, EffectSO effectSO, float remainingDuration)
+            public ActiveEffect(int instanceId, EffectSO effectSO, AbilityTarget abilitySource, AbilitySO abilitySO, float remainingDuration)
             {
                 this.instanceId = instanceId;
                 this.effectSO = effectSO;
+                this.abilitySource = abilitySource;
+                this.abilitySO = abilitySO;
                 this.remainingDuration = remainingDuration;
 
                 if (effectSO.HasTick)

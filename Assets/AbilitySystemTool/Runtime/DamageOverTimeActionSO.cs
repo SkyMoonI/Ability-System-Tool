@@ -8,18 +8,18 @@ namespace AbilitySystemTool
         [SerializeField] private float _damagePerTick = 1f;
         public float DamagePerTick => _damagePerTick;
 
-        public override void OnApply(AbilityTarget target, int instanceId, EffectSO effectSO) { }
+        public override void OnApply(in EffectContext context) { }
 
-        public override void OnTick(AbilityTarget target, int instanceId, EffectSO effectSO)
+        public override void OnTick(in EffectContext context)
         {
-            if (target == null) return;
-            HealthComponent healthComponent = target.HealthComponent;
+            if (context.Target == null) return;
+            HealthComponent healthComponent = context.Target.HealthComponent;
             if (healthComponent == null) return;
 
 
             healthComponent.TakeDamage(DamagePerTick);
         }
 
-        public override void OnExpire(AbilityTarget target, int instanceId, EffectSO effectSO) { }
+        public override void OnExpire(in EffectContext context) { }
     }
 }

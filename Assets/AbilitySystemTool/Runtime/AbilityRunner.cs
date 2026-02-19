@@ -2,10 +2,17 @@ using UnityEngine;
 
 namespace AbilitySystemTool
 {
+    [RequireComponent(typeof(AbilityTarget))]
     public sealed class AbilityRunner : MonoBehaviour
     {
         [SerializeField] private AbilitySO _abilitySO;
         [SerializeField] private AbilityTarget _currentAbilityTarget;
+        private AbilityTarget _abilityTarget;
+
+        private void Awake()
+        {
+            _abilityTarget = GetComponent<AbilityTarget>();
+        }
 
         private void Update()
         {
@@ -27,7 +34,7 @@ namespace AbilitySystemTool
             }
 
             Debug.Log($"[CAST] {abilitySO.name} (target={abilityTarget.name})");
-            abilitySystemComponent.ApplyAbility(abilitySO);
+            abilitySystemComponent.ApplyAbility(_abilityTarget, abilitySO);
         }
     }
 }
