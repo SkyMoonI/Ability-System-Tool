@@ -7,20 +7,22 @@ namespace AbilitySystemTool
     {
         private AbilityTarget _ownerTarget;
         private EffectRuntimeSystem _effectSystem;
+        private AbilityCooldownSystem _abilityCooldownSystem;
 
         private void Awake()
         {
             _ownerTarget = GetComponent<AbilityTarget>();
             _effectSystem = new EffectRuntimeSystem(_ownerTarget);
+            _abilityCooldownSystem = new AbilityCooldownSystem();
         }
 
         private void Update()
         {
             _effectSystem.Update(Time.deltaTime);
-
+            _abilityCooldownSystem.Update(Time.deltaTime);
         }
 
-        public void ApplyAbility(AbilityTarget abilitySource, AbilitySO abilitySO)
+        private void ApplyAbility(AbilityTarget abilitySource, AbilitySO abilitySO)
         {
             if (abilitySO == null) return;
 
@@ -31,6 +33,43 @@ namespace AbilitySystemTool
 
                 _effectSystem.ApplyEffect(abilitySource, abilitySO, effectSO);
             }
+        }
+
+        public bool TryCastAbility(AbilitySO ability, AbilityTarget target, out CastFailReason reason)
+        {
+            reason = CastFailReason.None;
+
+            if (ability == null || target == null)
+            {
+                reason = CastFailReason.Invalid;
+                return false;
+            }
+
+            AbilitySystemComponent targetAbilitySystemComponent = target.GetComponent<AbilitySystemComponent>();
+            if (targetAbilitySystemComponent == null)
+            {
+                reason = CastFailReason.NoTargetAbilitySystem;
+                return false;
+            }
+
+            if (_abilityCooldownSystem.IsOnCooldown(ability))
+            {
+                reason = CastFailReason.OnCooldown;
+                return false;
+            }
+
+            // Apply ability effects on target. Source is this owner.
+            targetAbilitySystemComponent.ApplyAbility(_ownerTarget, ability);
+
+            // start cooldown after successful application
+            _abilityCooldownSystem.TryStartCooldown(ability);
+
+            return true;
+        }
+
+        public float GetRemainingCooldown(AbilitySO ability)
+        {
+            return _abilityCooldownSystem.GetRemainingCooldown(ability);
         }
 
         public bool HasEffect(EffectSO effect)

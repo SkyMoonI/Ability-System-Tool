@@ -221,6 +221,10 @@ GameObject:
   m_Component:
   - component: {fileID: 619124271}
   - component: {fileID: 619124270}
+  - component: {fileID: 619124274}
+  - component: {fileID: 619124273}
+  - component: {fileID: 619124272}
+  - component: {fileID: 619124275}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -242,6 +246,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.AbilityRunner
   _abilitySO: {fileID: 11400000, guid: 4e72a180b3cea3f44a7faa06717a8fd0, type: 2}
   _currentAbilityTarget: {fileID: 1297592523}
+  _debugRemoveEffect: {fileID: 11400000, guid: c59811fbbb8382e44a4101a77de2ec07, type: 2}
+  _debugRemoveAllStacks: 1
 --- !u!4 &619124271
 Transform:
   m_ObjectHideFlags: 0
@@ -257,6 +263,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &619124272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619124269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d66584655b417eb45b4136ceb9ff1932, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AbilitySystemTool.Runtime::AbilitySystemTool.StatsComponent
+  _baseMoveSpeed: 10
+--- !u!114 &619124273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619124269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb678c75f9f20a4e8713ae6fb87d234, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AbilitySystemTool.Runtime::AbilitySystemTool.AbilityTarget
+  healthComponent: {fileID: 619124274}
+  statsComponent: {fileID: 619124272}
+--- !u!114 &619124274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619124269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36a2899ce62d9004ca8d3a7b713c25a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AbilitySystemTool.Runtime::AbilitySystemTool.HealthComponent
+  _maxHealth: 100
+--- !u!114 &619124275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619124269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe9bb56fdc4593745b7ac0f810f9e738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AbilitySystemTool.Runtime::AbilitySystemTool.AbilitySystemComponent
 --- !u!1 &1297592520
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,7 +327,7 @@ GameObject:
   - component: {fileID: 1297592524}
   - component: {fileID: 1297592523}
   - component: {fileID: 1297592522}
-  - component: {fileID: 1297592521}
+  - component: {fileID: 1297592526}
   m_Layer: 0
   m_Name: DummyTarget
   m_TagString: Untagged
@@ -277,18 +335,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1297592521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1297592520}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe9bb56fdc4593745b7ac0f810f9e738, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.AbilitySystemComponent
 --- !u!114 &1297592522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,6 +390,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1297592526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1297592520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe9bb56fdc4593745b7ac0f810f9e738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AbilitySystemTool.Runtime::AbilitySystemTool.AbilitySystemComponent
 --- !u!1 &1603406805
 GameObject:
   m_ObjectHideFlags: 0

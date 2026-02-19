@@ -8,5 +8,13 @@ namespace AbilitySystemTool
     {
         [SerializeField] private List<EffectSO> _effectList = new List<EffectSO>();
         public List<EffectSO> EffectList => _effectList;
+
+        [SerializeField] private float _cooldownSeconds = 0f;
+        public float CooldownSeconds => _cooldownSeconds;
+
+        private void OnValidate()
+        {
+            _cooldownSeconds = Mathf.Max(0f, _cooldownSeconds);
+        }
     }
 }

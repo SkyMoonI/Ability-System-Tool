@@ -2,20 +2,30 @@ using UnityEngine;
 
 namespace AbilitySystemTool
 {
-    [RequireComponent(typeof(AbilityTarget))]
+    [RequireComponent(typeof(AbilityTarget), typeof(AbilitySystemComponent))]
     public sealed class AbilityRunner : MonoBehaviour
     {
         [SerializeField] private AbilitySO _abilitySO;
         [SerializeField] private AbilityTarget _currentAbilityTarget;
-        private AbilityTarget _abilityTarget;
 
+        private AbilityTarget _casterAbilityTarget;
+        private AbilitySystemComponent _casterAbilitySystemComponent;
+
+        [Header("Debug")]
         [SerializeField] private EffectSO _debugRemoveEffect;
         [SerializeField] private bool _debugRemoveAllStacks = true;
 
 
         private void Awake()
         {
-            _abilityTarget = GetComponent<AbilityTarget>();
+            _casterAbilityTarget = GetComponent<AbilityTarget>();
+            _casterAbilitySystemComponent = GetComponent<AbilitySystemComponent>();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Assert(_casterAbilitySystemComponent != null,
+                "[AbilityRunner] Missing AbilitySystemComponent (RequireComponent should prevent this).",
+                this);
+#endif
         }
 
         private void Update()
@@ -36,22 +46,22 @@ namespace AbilitySystemTool
             {
                 DebugRemoveBySource();
             }
-
         }
 
         public void CastAbility(AbilitySO abilitySO, AbilityTarget abilityTarget)
         {
             if (abilitySO == null || abilityTarget == null) return;
 
-            AbilitySystemComponent abilitySystemComponent = abilityTarget.GetComponent<AbilitySystemComponent>();
-            if (abilitySystemComponent == null)
+            bool castResult = _casterAbilitySystemComponent.TryCastAbility(abilitySO, abilityTarget, out CastFailReason reason);
+
+            if (!castResult && reason == CastFailReason.OnCooldown)
             {
-                Debug.LogWarning($"[CAST FAIL] Target has no AbilitySystemComponent: {abilityTarget.name}");
+                float remaining = _casterAbilitySystemComponent.GetRemainingCooldown(abilitySO);
+                Debug.LogWarning($"[CAST FAIL] {abilitySO.name} (target={abilityTarget.name}, reason={reason}, remaining={remaining:0.00}s)");
                 return;
             }
 
-            Debug.Log($"[CAST] {abilitySO.name} (target={abilityTarget.name})");
-            abilitySystemComponent.ApplyAbility(_abilityTarget, abilitySO);
+            Debug.Log($"[CAST] {abilitySO.name} (target={abilityTarget.name}, reason={reason})");
         }
 
         private void DebugRemoveEffect()
@@ -67,13 +77,13 @@ namespace AbilitySystemTool
 
         private void DebugRemoveBySource()
         {
-            if (_currentAbilityTarget == null || _abilityTarget == null) return;
+            if (_currentAbilityTarget == null || _casterAbilityTarget == null) return;
 
             AbilitySystemComponent asc = _currentAbilityTarget.GetComponent<AbilitySystemComponent>();
             if (asc == null) return;
 
-            int removed = asc.RemoveEffectsBySource(_abilityTarget, RemoveReason.SourceRemoved);
-            Debug.Log($"[DEBUG] RemoveEffectsBySource source={_abilityTarget.name} removed={removed}");
+            int removed = asc.RemoveEffectsBySource(_casterAbilityTarget, RemoveReason.SourceRemoved);
+            Debug.Log($"[DEBUG] RemoveEffectsBySource source={_casterAbilityTarget.name} removed={removed}");
         }
 
     }
