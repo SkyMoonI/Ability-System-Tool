@@ -20,7 +20,7 @@ namespace AbilitySystemTool
             if (statsComponent == null) return;
 
             statsComponent.MultiplyMoveSpeed(_multiplier);
-            Debug.Log($"[SLOW APPLY] {context.Effect.name} (id={context.InstanceId}, mult={_multiplier}, speed={statsComponent.CurrentMoveSpeed})");
+            RuntimeLogger.Log($"[SLOW APPLY] {context.Effect.name} (id={context.InstanceId}, mult={_multiplier}, speed={statsComponent.CurrentMoveSpeed})");
         }
 
         public override void OnTick(in EffectContext context) { }
@@ -32,7 +32,7 @@ namespace AbilitySystemTool
             if (statsComponent == null) return;
 
             statsComponent.DivideMoveSpeed(_multiplier);
-            Debug.Log($"[SLOW EXPIRE] {context.Effect.name} (id={context.InstanceId}, mult={_multiplier}, speed={statsComponent.CurrentMoveSpeed})");
+            RuntimeLogger.Log($"[SLOW EXPIRE] {context.Effect.name} (id={context.InstanceId}, mult={_multiplier}, speed={statsComponent.CurrentMoveSpeed})");
         }
     }
 }

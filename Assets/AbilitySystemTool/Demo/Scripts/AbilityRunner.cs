@@ -57,11 +57,11 @@ namespace AbilitySystemTool
             if (!castResult && reason == CastFailReason.OnCooldown)
             {
                 float remaining = _casterAbilitySystemComponent.GetRemainingCooldown(abilitySO);
-                Debug.LogWarning($"[CAST FAIL] {abilitySO.name} (target={abilityTarget.name}, reason={reason}, remaining={remaining:0.00}s)");
+                DemoLogger.Warn($"[CAST FAIL] {abilitySO.name} (target={abilityTarget.name}, reason={reason}, remaining={remaining:0.00}s)");
                 return;
             }
 
-            Debug.Log($"[CAST] {abilitySO.name} (target={abilityTarget.name}, reason={reason})");
+            DemoLogger.Log($"[CAST] {abilitySO.name} (target={abilityTarget.name}, reason={reason})");
         }
 
         private void DebugRemoveEffect()
@@ -72,7 +72,7 @@ namespace AbilitySystemTool
             if (asc == null) return;
 
             int removed = asc.RemoveEffect(_debugRemoveEffect, RemoveReason.Debug, _debugRemoveAllStacks);
-            Debug.Log($"[DEBUG] RemoveEffect {_debugRemoveEffect.name} removed={removed} allStacks={_debugRemoveAllStacks}");
+            DemoLogger.Log($"[DEBUG] RemoveEffect {_debugRemoveEffect.name} removed={removed} allStacks={_debugRemoveAllStacks}");
         }
 
         private void DebugRemoveBySource()
@@ -83,7 +83,7 @@ namespace AbilitySystemTool
             if (asc == null) return;
 
             int removed = asc.RemoveEffectsBySource(_casterAbilityTarget, RemoveReason.SourceRemoved);
-            Debug.Log($"[DEBUG] RemoveEffectsBySource source={_casterAbilityTarget.name} removed={removed}");
+            DemoLogger.Log($"[DEBUG] RemoveEffectsBySource source={_casterAbilityTarget.name} removed={removed}");
         }
 
     }

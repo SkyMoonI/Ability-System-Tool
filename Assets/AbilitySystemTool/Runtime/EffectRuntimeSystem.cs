@@ -44,10 +44,10 @@ namespace AbilitySystemTool
                             activeEffect.abilitySO = abilitySO;
 
                             _activeEffectList[i] = activeEffect;
-                            Debug.Log($"[REFRESH] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={activeEffect.instanceId})");
+                            RuntimeLogger.Log($"[REFRESH] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={activeEffect.instanceId})");
                             break;
                         case StackingPolicy.Replace:
-                            Debug.Log($"[REPLACE] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={activeEffect.instanceId})");
+                            RuntimeLogger.Log($"[REPLACE] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={activeEffect.instanceId})");
 
                             int count = _activeEffectCountDictionary.TryGetValue(effectSO, out int c) ? c : 1;
 
@@ -79,7 +79,7 @@ namespace AbilitySystemTool
 
                             effectSO.EffectActionSO?.OnApply(in newEffectContext);
 
-                            Debug.Log($"[STACK] {effectSO.name} (count={stackCount}, EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={stackedActiveEffect.instanceId})");
+                            RuntimeLogger.Log($"[STACK] {effectSO.name} (count={stackCount}, EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={stackedActiveEffect.instanceId})");
                             break;
                     }
                     return;
@@ -106,7 +106,7 @@ namespace AbilitySystemTool
 
             effectSO.EffectActionSO?.OnApply(in effectContext);
 
-            Debug.Log($"[APPLY] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={newActiveEffect.instanceId})");
+            RuntimeLogger.Log($"[APPLY] {effectSO.name} (EffectDuration={effectSO.EffectDuration}, tick={effectSO.HasTick}, id={newActiveEffect.instanceId})");
         }
 
         private void UpdateActiveEffects(float deltaTime)
@@ -129,7 +129,7 @@ namespace AbilitySystemTool
                         EffectContext effectContext = BuildContext(in activeEffect, stackCount);
 
 
-                        Debug.Log($"[TICK] {activeEffect.effectSO.name} (id={activeEffect.instanceId})");
+                        RuntimeLogger.Log($"[TICK] {activeEffect.effectSO.name} (id={activeEffect.instanceId})");
                         activeEffect.effectSO.EffectActionSO?.OnTick(in effectContext);
                     }
                 }
@@ -143,7 +143,7 @@ namespace AbilitySystemTool
 
                     activeEffect.effectSO.EffectActionSO?.OnExpire(in effectContext);
 
-                    Debug.Log($"[EXPIRE] {activeEffect.effectSO.name} (id={activeEffect.instanceId})");
+                    RuntimeLogger.Log($"[EXPIRE] {activeEffect.effectSO.name} (id={activeEffect.instanceId})");
 
                     _activeEffectList.RemoveAt(i);
 
@@ -212,7 +212,7 @@ namespace AbilitySystemTool
                 EffectContext effectContext = BuildContext(in activeEffect, countBefore);
                 activeEffect.effectSO.EffectActionSO?.OnExpire(in effectContext);
 
-                Debug.Log($"[REMOVE] {activeEffect.effectSO.name} (id={activeEffect.instanceId}, reason={reason})");
+                RuntimeLogger.Log($"[REMOVE] {activeEffect.effectSO.name} (id={activeEffect.instanceId}, reason={reason})");
 
                 _activeEffectList.RemoveAt(i);
 
@@ -245,7 +245,7 @@ namespace AbilitySystemTool
                     EffectContext effectContext = BuildContext(in activeEffect, countBefore);
                     activeEffect.effectSO.EffectActionSO?.OnExpire(in effectContext);
 
-                    Debug.Log($"[REMOVE] {activeEffect.effectSO.name} (id={activeEffect.instanceId}, reason={reason})");
+                    RuntimeLogger.Log($"[REMOVE] {activeEffect.effectSO.name} (id={activeEffect.instanceId}, reason={reason})");
 
                     _activeEffectList.RemoveAt(i);
 
@@ -259,6 +259,7 @@ namespace AbilitySystemTool
 
             return removedCount;
         }
+
 
         private struct ActiveEffect
         {
