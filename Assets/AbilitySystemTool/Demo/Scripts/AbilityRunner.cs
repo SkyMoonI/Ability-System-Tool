@@ -47,6 +47,7 @@ namespace AbilitySystemTool
                 DebugRemoveBySource();
             }
 
+#if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.B))
             {
                 if (_currentAbilityTarget != null &&
@@ -55,7 +56,7 @@ namespace AbilitySystemTool
                     DebugCapacity(targetAsc);
                 }
             }
-
+#endif
         }
 
         public void CastAbility(AbilitySO abilitySO, AbilityTarget abilityTarget)
@@ -96,9 +97,11 @@ namespace AbilitySystemTool
             DemoLogger.Log($"[DEBUG] RemoveEffectsBySource source={_casterAbilityTarget.name} removed={removed}");
         }
 
+#if UNITY_EDITOR
         private void DebugCapacity(AbilitySystemComponent abilitySystemComponent)
         {
             Debug.Log($"ActiveEffectCount: {abilitySystemComponent.ActiveEffectCount} ActiveEffectCapacity: {abilitySystemComponent.ActiveEffectCapacity}, DistinctEffectCount: {abilitySystemComponent.DistinctEffectCount} ");
         }
+#endif
     }
 }
