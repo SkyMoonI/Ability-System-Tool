@@ -315,6 +315,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe9bb56fdc4593745b7ac0f810f9e738, type: 3}
   m_Name: 
   m_EditorClassIdentifier: AbilitySystemTool.Runtime::AbilitySystemTool.AbilitySystemComponent
+  _initialActiveEffectCapacity: 32
+  _initialDistinctEffectCapacity: 8
 --- !u!1 &1297592520
 GameObject:
   m_ObjectHideFlags: 0
@@ -402,6 +404,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe9bb56fdc4593745b7ac0f810f9e738, type: 3}
   m_Name: 
   m_EditorClassIdentifier: AbilitySystemTool.Runtime::AbilitySystemTool.AbilitySystemComponent
+  _initialActiveEffectCapacity: 8
+  _initialDistinctEffectCapacity: 8
 --- !u!1 &1603406805
 GameObject:
   m_ObjectHideFlags: 0

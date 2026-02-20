@@ -107,7 +107,7 @@ namespace AbilitySystemTool
             return _effectSystem.RemoveEffectsBySource(source, reason);
         }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR
         internal int ActiveEffectCount => _effectSystem.ActiveEffectCount;
         internal int ActiveEffectCapacity => _effectSystem.ActiveEffectCapacity;
         internal int DistinctEffectCount => _effectSystem.DistinctEffectCount;

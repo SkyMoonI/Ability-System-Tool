@@ -1,6 +1,3 @@
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 using UnityEngine;
 
 namespace AbilitySystemTool
@@ -34,6 +31,7 @@ namespace AbilitySystemTool
 
         private const float MinTickInterval = 0.01f;
 
+#if UNITY_EDITOR
         private void OnValidate()
         {
             bool changed = false;
@@ -62,13 +60,11 @@ namespace AbilitySystemTool
                     changed = true;
                 }
             }
-
-#if UNITY_EDITOR
             if (changed)
             {
-                EditorUtility.SetDirty(this);
+                UnityEditor.EditorUtility.SetDirty(this);
             }
-#endif
         }
+#endif
     }
 }

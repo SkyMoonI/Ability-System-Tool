@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace AbilitySystemTool
 {
     public readonly struct EffectContext
