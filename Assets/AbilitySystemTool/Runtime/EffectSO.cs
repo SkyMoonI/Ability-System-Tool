@@ -42,7 +42,7 @@ namespace AbilitySystemTool
             {
                 _effectDuration = 0f;
                 changed = true;
-                Debug.LogWarning($"[EffectSO] Duration was < 0. Clamped to 0 on '{name}'.", this);
+                RuntimeLogger.Warn($"[EffectSO] Duration was < 0. Clamped to 0 on '{name}'.", this);
             }
 
             if (_hasTick)
@@ -51,7 +51,7 @@ namespace AbilitySystemTool
                 {
                     _tickInterval = MinTickInterval;
                     changed = true;
-                    Debug.LogWarning($"[EffectSO] TickInterval was < {MinTickInterval}. Clamped to {MinTickInterval} on '{name}'.", this);
+                    RuntimeLogger.Warn($"[EffectSO] TickInterval was < {MinTickInterval}. Clamped to {MinTickInterval} on '{name}'.", this);
                 }
             }
             else

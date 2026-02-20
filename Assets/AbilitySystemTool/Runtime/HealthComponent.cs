@@ -22,7 +22,7 @@ namespace AbilitySystemTool
             if (damageAmount <= 0f) return;
 
             _currentHealth = Mathf.Max(0, _currentHealth - damageAmount);
-            Debug.Log($"Health: {_currentHealth} / {_maxHealth}");
+            RuntimeLogger.Log($"Health: {_currentHealth} / {_maxHealth}");
         }
     }
 }

@@ -5,14 +5,24 @@ namespace AbilitySystemTool
     [RequireComponent(typeof(AbilityTarget))]
     public sealed class AbilitySystemComponent : MonoBehaviour
     {
+        [SerializeField] private int _initialActiveEffectCapacity = 64;
+        [SerializeField] private int _initialDistinctEffectCapacity = 16;
+
         private AbilityTarget _ownerTarget;
-        private EffectRuntimeSystem _effectSystem;
         private AbilityCooldownSystem _abilityCooldownSystem;
+        private EffectRuntimeSystem _effectSystem;
+
+
+        private void OnValidate()
+        {
+            _initialActiveEffectCapacity = Mathf.Max(1, _initialActiveEffectCapacity);
+            _initialDistinctEffectCapacity = Mathf.Max(1, _initialDistinctEffectCapacity);
+        }
 
         private void Awake()
         {
             _ownerTarget = GetComponent<AbilityTarget>();
-            _effectSystem = new EffectRuntimeSystem(_ownerTarget);
+            _effectSystem = new EffectRuntimeSystem(_ownerTarget, _initialActiveEffectCapacity, _initialDistinctEffectCapacity);
             _abilityCooldownSystem = new AbilityCooldownSystem();
         }
 
@@ -96,5 +106,12 @@ namespace AbilitySystemTool
         {
             return _effectSystem.RemoveEffectsBySource(source, reason);
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        internal int ActiveEffectCount => _effectSystem.ActiveEffectCount;
+        internal int ActiveEffectCapacity => _effectSystem.ActiveEffectCapacity;
+        internal int DistinctEffectCount => _effectSystem.DistinctEffectCount;
+#endif
+
     }
 }
