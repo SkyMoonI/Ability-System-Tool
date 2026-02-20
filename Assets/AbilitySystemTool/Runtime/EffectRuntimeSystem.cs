@@ -148,7 +148,7 @@ namespace AbilitySystemTool
 
                     RuntimeLogger.Log($"[EXPIRE] {activeEffect.effectSO.name} (id={activeEffect.instanceId})");
 
-                    _activeEffectList.RemoveAt(i);
+                    RemoveAtSwapBackActiveEffectList(i);
 
                     int stackCountAfter = stackCountBefore - 1;
                     if (stackCountAfter <= 0) _activeEffectCountDictionary.Remove(activeEffect.effectSO);
@@ -217,7 +217,7 @@ namespace AbilitySystemTool
 
                 RuntimeLogger.Log($"[REMOVE] {activeEffect.effectSO.name} (id={activeEffect.instanceId}, reason={reason})");
 
-                _activeEffectList.RemoveAt(i);
+                RemoveAtSwapBackActiveEffectList(i);
 
                 currentCount--;
                 if (currentCount <= 0) _activeEffectCountDictionary.Remove(effect);
@@ -250,7 +250,7 @@ namespace AbilitySystemTool
 
                     RuntimeLogger.Log($"[REMOVE] {activeEffect.effectSO.name} (id={activeEffect.instanceId}, reason={reason})");
 
-                    _activeEffectList.RemoveAt(i);
+                    RemoveAtSwapBackActiveEffectList(i);
 
                     int countAfter = countBefore - 1;
                     if (countAfter <= 0) _activeEffectCountDictionary.Remove(activeEffect.effectSO);
@@ -261,6 +261,19 @@ namespace AbilitySystemTool
             }
 
             return removedCount;
+        }
+
+        private void RemoveAtSwapBackActiveEffectList(int index)
+        {
+            int lastIndex = _activeEffectList.Count - 1;
+            if (lastIndex < 0) return;
+
+            if (index != lastIndex)
+            {
+                _activeEffectList[index] = _activeEffectList[lastIndex];
+            }
+
+            _activeEffectList.RemoveAt(lastIndex);
         }
 
 
