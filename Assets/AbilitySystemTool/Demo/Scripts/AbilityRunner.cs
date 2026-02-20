@@ -46,6 +46,16 @@ namespace AbilitySystemTool
             {
                 DebugRemoveBySource();
             }
+
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                if (_currentAbilityTarget != null &&
+                        _currentAbilityTarget.TryGetComponent(out AbilitySystemComponent targetAsc))
+                {
+                    DebugCapacity(targetAsc);
+                }
+            }
+
         }
 
         public void CastAbility(AbilitySO abilitySO, AbilityTarget abilityTarget)
@@ -86,5 +96,9 @@ namespace AbilitySystemTool
             DemoLogger.Log($"[DEBUG] RemoveEffectsBySource source={_casterAbilityTarget.name} removed={removed}");
         }
 
+        private void DebugCapacity(AbilitySystemComponent abilitySystemComponent)
+        {
+            Debug.Log($"ActiveEffectCount: {abilitySystemComponent.ActiveEffectCount} ActiveEffectCapacity: {abilitySystemComponent.ActiveEffectCapacity}, DistinctEffectCount: {abilitySystemComponent.DistinctEffectCount} ");
+        }
     }
 }

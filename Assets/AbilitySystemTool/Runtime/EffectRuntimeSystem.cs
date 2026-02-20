@@ -9,12 +9,15 @@ namespace AbilitySystemTool
         private List<ActiveEffect> _activeEffectList;
         private Dictionary<EffectSO, int> _activeEffectCountDictionary;
         private int _nextInstanceId = 1;
+        internal int ActiveEffectCount => _activeEffectList.Count;
+        internal int ActiveEffectCapacity => _activeEffectList.Capacity;
+        internal int DistinctEffectCount => _activeEffectCountDictionary.Count;
 
-        public EffectRuntimeSystem(AbilityTarget ownerTarget, int initialCapacity = 32)
+        public EffectRuntimeSystem(AbilityTarget ownerTarget, int initialActiveEffectCapacity = 64, int initialDistinctEffectCapacity = 16)
         {
             _ownerTarget = ownerTarget;
-            _activeEffectList = new List<ActiveEffect>(initialCapacity);
-            _activeEffectCountDictionary = new Dictionary<EffectSO, int>(Mathf.Max(8, initialCapacity / 2));
+            _activeEffectList = new List<ActiveEffect>(initialActiveEffectCapacity);
+            _activeEffectCountDictionary = new Dictionary<EffectSO, int>(initialDistinctEffectCapacity);
         }
 
         public void Update(float deltaTime)
