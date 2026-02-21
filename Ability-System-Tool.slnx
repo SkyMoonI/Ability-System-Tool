@@ -1,5 +1,6 @@
 ﻿<Solution>
   <Project Path="AbilitySystemTool.Runtime.csproj" />
   <Project Path="_DevOnly.Editor.csproj" />
+  <Project Path="AbilitySystemTool.Editor.csproj" />
   <Project Path="AbilitySystemTool.Demo.csproj" />
 </Solution>
