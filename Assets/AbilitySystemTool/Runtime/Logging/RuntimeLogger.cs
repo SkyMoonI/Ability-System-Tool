@@ -16,5 +16,9 @@ namespace AbilitySystemTool
 
         [Conditional("AST_LOG")]
         public static void Error(string message) => UnityEngine.Debug.LogError(message);
+
+        [Conditional("UNITY_EDITOR")]
+        [Conditional("DEVELOPMENT_BUILD")]
+        public static void DevAssert(bool condition, string message, Object context) => UnityEngine.Debug.Assert(condition, message, context);
     }
 }

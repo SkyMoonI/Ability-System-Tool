@@ -65,10 +65,17 @@ namespace AbilitySystemTool
 
             bool castResult = _casterAbilitySystemComponent.TryCastAbility(abilitySO, abilityTarget, out CastFailReason reason);
 
-            if (!castResult && reason == CastFailReason.OnCooldown)
+            if (!castResult)
             {
-                float remaining = _casterAbilitySystemComponent.GetRemainingCooldown(abilitySO);
-                DemoLogger.Warn($"[CAST FAIL] {abilitySO.name} (target={abilityTarget.name}, reason={reason}, remaining={remaining:0.00}s)");
+                if (reason == CastFailReason.OnCooldown)
+                {
+                    float remaining = _casterAbilitySystemComponent.GetRemainingCooldown(abilitySO);
+                    DemoLogger.Warn($"[CAST FAIL] {abilitySO.name} (target={abilityTarget.name}, reason={reason}, remaining={remaining:0.00}s)");
+                    return;
+                }
+
+                // other fail reasons
+                DemoLogger.Warn($"[CAST FAIL] {abilitySO.name} (target={abilityTarget.name}, reason={reason})");
                 return;
             }
 
