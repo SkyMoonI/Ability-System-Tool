@@ -16,3 +16,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 92591a1caa7e13e48a41e62ccabaaca9, type: 2}
   - {fileID: 11400000, guid: c59811fbbb8382e44a4101a77de2ec07, type: 2}
   _cooldownSeconds: 2
+  _requirementList: []
+  _costList:
+  - {fileID: 11400000, guid: 4a8360e292eb2d244b9308c97704252b, type: 2}

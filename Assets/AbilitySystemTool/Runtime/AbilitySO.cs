@@ -7,10 +7,15 @@ namespace AbilitySystemTool
     public class AbilitySO : ScriptableObject
     {
         [SerializeField] private List<EffectSO> _effectList = new List<EffectSO>();
-        public List<EffectSO> EffectList => _effectList;
+        public IReadOnlyList<EffectSO> EffectList => _effectList;
 
         [SerializeField] private float _cooldownSeconds = 0f;
         public float CooldownSeconds => _cooldownSeconds;
+
+        [SerializeField] private List<AbilityRequirementSO> _requirementList = new List<AbilityRequirementSO>();
+        [SerializeField] private List<AbilityCostSO> _costList = new List<AbilityCostSO>();
+        public IReadOnlyList<AbilityRequirementSO> RequirementList => _requirementList;
+        public IReadOnlyList<AbilityCostSO> CostList => _costList;
 
         private void OnValidate()
         {

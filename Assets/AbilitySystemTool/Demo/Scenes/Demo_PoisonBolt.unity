@@ -225,6 +225,7 @@ GameObject:
   - component: {fileID: 619124273}
   - component: {fileID: 619124272}
   - component: {fileID: 619124275}
+  - component: {fileID: 619124276}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -290,6 +291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: AbilitySystemTool.Runtime::AbilitySystemTool.AbilityTarget
   healthComponent: {fileID: 619124274}
   statsComponent: {fileID: 619124272}
+  resourceComponent: {fileID: 0}
 --- !u!114 &619124274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -317,6 +319,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: AbilitySystemTool.Runtime::AbilitySystemTool.AbilitySystemComponent
   _initialActiveEffectCapacity: 32
   _initialDistinctEffectCapacity: 8
+--- !u!114 &619124276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619124269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c5c0ceafc0bee144be51c696ae289b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AbilitySystemTool.Runtime::AbilitySystemTool.ResourceComponent
+  _resourceList:
+  - ResourceId: {fileID: 11400000, guid: d844a3dd6a9998d478f5f190722d673a, type: 2}
+    CurrentResourceAmount: 20
+    MaxResourceCapacity: 20
 --- !u!1 &1297592520
 GameObject:
   m_ObjectHideFlags: 0
@@ -364,6 +382,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilitySystemTool.AbilityTarget
   healthComponent: {fileID: 1297592524}
   statsComponent: {fileID: 1297592522}
+  resourceComponent: {fileID: 0}
 --- !u!114 &1297592524
 MonoBehaviour:
   m_ObjectHideFlags: 0
